@@ -1,8 +1,17 @@
 import xml.etree.ElementTree as ET
 import pickle
-import os
+import os,sys
 from os import listdir, getcwd
 from os.path import join
+
+seq_begin = 0
+seq_end = 0
+
+if len(sys.argv) > 1:
+    seq_begin = int(sys.argv[1])
+
+if len(sys.argv) > 2:
+    seq_end = int(sys.argv[2])
 
 sets = [('2012', 'train'), ('2012', 'val'),
         ('2007', 'train'), ('2007', 'val'), ('2007', 'test')]
@@ -51,11 +60,11 @@ def convert_annotation(year, image_id):
 wd = getcwd()
 
 for year, image_set in sets:
+    seq = 0
     VOC = 'VOCdevkit/VOC%s' % (year)
     labels = '%s/labels' % (VOC)
     ImageSets_Main = '%s/ImageSets/Main/%s.txt' % (VOC, image_set)
     JPEGImages = '%s/JPEGImages' % (VOC)
-    print('ImageSets_Main:', ImageSets_Main)
 
     if not os.path.exists(labels):
         os.makedirs(labels)
@@ -66,6 +75,11 @@ for year, image_set in sets:
     for image_id in image_ids:
         JPEG_file = '%s/%s/%s.jpg' % (wd, JPEGImages, image_id)
         if os.path.exists(JPEG_file):
+            seq += 1
+            if (seq_end > 0) and (seq >= seq_end):
+                break
+            if (seq_begin > 0) and (seq < seq_begin):
+                continue
             list_file.write('%s\n' % (JPEG_file))
             convert_annotation(year, image_id)
 
