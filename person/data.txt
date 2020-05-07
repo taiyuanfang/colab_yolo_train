@@ -1,0 +1,5 @@
+classes= 1
+train  = /content/colab_yolo_train/dataset/train.txt
+valid  = /content/colab_yolo_train/dataset/test.txt
+names = /content/colab_yolo_train/person/names.txt
+backup = backup
