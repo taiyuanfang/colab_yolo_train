@@ -4,15 +4,6 @@ import os,sys
 from os import listdir, getcwd
 from os.path import join
 
-seq_begin = 0
-seq_end = 0
-
-if len(sys.argv) > 1:
-    seq_begin = int(sys.argv[1])
-
-if len(sys.argv) > 2:
-    seq_end = int(sys.argv[2])
-
 sets = [('2012', 'train'), ('2012', 'val'),
         ('2007', 'train'), ('2007', 'val'), ('2007', 'test')]
 
@@ -59,7 +50,6 @@ def convert_annotation(year, image_id):
 wd = getcwd()
 
 for year, image_set in sets:
-    seq = 0
     VOC = 'VOCdevkit/VOC%s' % (year)
     labels = '%s/labels' % (VOC)
     ImageSets_Main = '%s/ImageSets/Main/%s.txt' % (VOC, image_set)
@@ -72,17 +62,11 @@ for year, image_set in sets:
     list_file = open('%s_%s.txt' % (year, image_set), 'w')
 
     for image_id in image_ids:
-        JPEG_file = '%s/%s/%s.jpg' % (wd, JPEGImages, image_id)
+        JPEG_file = '%s/%s.jpg' % (JPEGImages, image_id)
         if os.path.exists(JPEG_file):
-            seq += 1
-            if (seq_end > 0) and (seq >= seq_end):
-                break
-            if (seq_begin > 0) and (seq < seq_begin):
-                continue
             list_file.write('%s\n' % (JPEG_file))
             convert_annotation(year, image_id)
 
     list_file.close()
 
-os.system("cat 2012_train.txt 2012_val.txt > train.txt")
-os.system("cat 2007_train.txt 2007_val.txt 2007_test.txt > test.txt")
+os.system("cat 2007_train.txt 2007_val.txt 2007_test.txt 2012_train.txt 2012_val.txt > total.txt")
